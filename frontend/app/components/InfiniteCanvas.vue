@@ -39,6 +39,12 @@ function onPointerMove(event: PointerEvent) {
 function onPointerUp() {
   dragging = false
 }
+
+function toWorld(clientX: number, clientY: number) {
+  return { x: (clientX - offset.x) / scale.value, y: (clientY - offset.y) / scale.value }
+}
+
+defineExpose({ toWorld })
 </script>
 
 <template>
