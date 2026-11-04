@@ -1,0 +1,86 @@
+[
+  {
+    "x": 1200,
+    "y": 96,
+    "width": 192,
+    "height": 192,
+    "text": "",
+    "fontSize": 18,
+    "bold": false,
+    "type": "sticky-note",
+    "color": "yellow",
+    "id": "be33f0bf-1b73-4e7f-a862-760ca208091d"
+  },
+  {
+    "x": 768,
+    "y": 96,
+    "width": 192,
+    "height": 192,
+    "text": "",
+    "fontSize": 18,
+    "bold": false,
+    "type": "sticky-note",
+    "color": "green",
+    "id": "513c0530-1c4e-4e2d-a992-7f602df6da49"
+  },
+  {
+    "x": 1416,
+    "y": 96,
+    "width": 192,
+    "height": 192,
+    "text": "",
+    "fontSize": 18,
+    "bold": false,
+    "type": "sticky-note",
+    "color": "green",
+    "id": "62b5aad5-0c72-4955-882f-aa10c8877836"
+  },
+  {
+    "x": 1848,
+    "y": 96,
+    "width": 192,
+    "height": 192,
+    "text": "",
+    "fontSize": 18,
+    "bold": false,
+    "type": "sticky-note",
+    "color": "green",
+    "id": "ef0ce0c9-02fa-4731-8cfa-9561ac6b6db6"
+  },
+  {
+    "x": 336,
+    "y": 96,
+    "width": 192,
+    "height": 192,
+    "text": "",
+    "fontSize": 18,
+    "bold": false,
+    "type": "sticky-note",
+    "color": "green",
+    "id": "a04e9fcb-be12-40f7-a0f3-30d7d11f0fa1"
+  },
+  {
+    "x": 984,
+    "y": 96,
+    "width": 192,
+    "height": 192,
+    "text": "",
+    "fontSize": 18,
+    "bold": false,
+    "type": "sticky-note",
+    "color": "pink",
+    "id": "af8ad184-8249-4566-9895-752292fca902"
+  },
+  {
+    "x": 1632,
+    "y": 96,
+    "width": 192,
+    "height": 192,
+    "text": "",
+    "fontSize": 18,
+    "bold": false,
+    "type": "sticky-note",
+    "color": "green",
+    "id": "1881fc5d-a826-4373-925c-41c252c04f1a"
+  }
+]

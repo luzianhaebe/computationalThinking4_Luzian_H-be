@@ -1,0 +1,27 @@
+meta {
+  name: PATCH /objects/:id
+  type: http
+  seq: 3
+}
+
+patch {
+  url: http://localhost:3001/objects/bruno-note
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "x": 240
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.x: eq 240
+}
+
+docs {
+  Moves the object from POST /objects: 200, x is now 240.
+  Without that object (e.g. after DELETE): 404.
+}

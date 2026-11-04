@@ -1,0 +1,20 @@
+meta {
+  name: DELETE /objects/:id
+  type: http
+  seq: 4
+}
+
+delete {
+  url: http://localhost:3001/objects/bruno-note
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 204
+}
+
+docs {
+  Deletes the object from POST /objects: 204.
+  Send it a second time: 404, because it is gone.
+}
