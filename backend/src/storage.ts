@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js'
 // The backend treats objects as plain JSON; it only relies on every object having an id.
 export type BoardObject = { id: string } & Record<string, unknown>
 export type Board = { id: string; name: string; createdAt: string }
+export type Profile = { id: string; email: string; name: string | null; avatarUrl: string | null }
+export type Member = Pick<Profile, 'name' | 'avatarUrl'>
 
 // This module is the only place that knows about the database.
 // The secret key stays in the backend; it must never reach the browser.
@@ -12,7 +14,7 @@ const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SE
 const DUPLICATE_KEY = '23505'
 
 // Field names the frontend uses that are named differently in the tables.
-const COLUMNS: Record<string, string> = { fontSize: 'font_size', createdAt: 'created_at' }
+const COLUMNS: Record<string, string> = { fontSize: 'font_size', createdAt: 'created_at', avatarUrl: 'avatar_url' }
 const FIELDS = Object.fromEntries(Object.entries(COLUMNS).map(([field, column]) => [column, field]))
 
 function toRow(object: Record<string, unknown>) {
@@ -30,10 +32,40 @@ function fromObjectRow({ board_id, created_at, ...row }: Record<string, unknown>
   return fromRow(row) as BoardObject
 }
 
-export async function listBoards() {
-  const { data, error } = await supabase.from('boards').select().order('created_at', { ascending: false })
+// Only the boards the user is a member of, each with the name and avatar of all its members.
+export async function listBoards(userId: string) {
+  const mine = await supabase.from('board_members').select('board_id').eq('user_id', userId)
+  if (mine.error) throw new Error(mine.error.message)
+  const { data, error } = await supabase
+    .from('boards')
+    .select('id, name, created_at, board_members(profiles(name, avatar_url))')
+    .in('id', mine.data.map(row => row.board_id))
+    .order('created_at', { ascending: false })
   if (error) throw new Error(error.message)
-  return data.map(row => fromRow(row) as Board)
+  return data.map(({ board_members, ...board }) => ({
+    ...(fromRow(board) as Board),
+    members: board_members.map(({ profiles }) => fromRow(profiles as unknown as Record<string, unknown>) as Member),
+  }))
+}
+
+// Called after every login, so name and avatar stay up to date.
+export async function saveProfile(profile: Profile) {
+  const { error } = await supabase.from('profiles').upsert(toRow(profile))
+  if (error) throw new Error(error.message)
+}
+
+export async function findProfileByEmail(email: string) {
+  const { data, error } = await supabase.from('profiles').select().eq('email', email).maybeSingle()
+  if (error) throw new Error(error.message)
+  return data ? (fromRow(data) as Profile) : undefined
+}
+
+// Adding someone who already is a member changes nothing.
+export async function addMember(boardId: string, userId: string) {
+  const { error } = await supabase
+    .from('board_members')
+    .upsert({ board_id: boardId, user_id: userId }, { ignoreDuplicates: true })
+  if (error) throw new Error(error.message)
 }
 
 export async function getBoard(id: string) {

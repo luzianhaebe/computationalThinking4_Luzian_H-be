@@ -1,9 +1,10 @@
-import type { Board } from '~/types/board'
+import type { Board, Member } from '~/types/board'
 
 // The list of boards for the overview. Every change goes through one of the functions below,
 // just like useBoard does for the objects on one board.
 export function useBoards() {
-  const api = $fetch.create({ baseURL: useRuntimeConfig().public.apiBase })
+  // The login cookie only goes along with `credentials: 'include'`; the backend needs it to know who asks.
+  const api = $fetch.create({ baseURL: useRuntimeConfig().public.apiBase, credentials: 'include' })
   const boards = useState<Board[]>('boards', () => [])
 
   async function load() {
@@ -38,5 +39,21 @@ export function useBoards() {
     api(`/boards/${id}`, { method: 'DELETE' })
   }
 
-  return { boards: readonly(boards), load, getBoard, addBoard, renameBoard, removeBoard }
+  // Waits for the backend, because only it knows whether someone with this mail exists.
+  // Returns false if nobody with this mail has logged in yet.
+  async function addMember(boardId: string, email: string) {
+    try {
+      const member = await api<Member>(`/boards/${boardId}/members`, { method: 'POST', body: { email } })
+      boards.value = boards.value.map(board =>
+        board.id === boardId ? { ...board, members: [...(board.members ?? []), member] } : board,
+      )
+      return true
+    }
+    catch (error) {
+      if ((error as { statusCode?: number }).statusCode === 404) return false
+      throw error
+    }
+  }
+
+  return { boards: readonly(boards), load, getBoard, addBoard, renameBoard, removeBoard, addMember }
 }
